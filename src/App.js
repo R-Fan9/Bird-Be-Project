@@ -23,8 +23,8 @@ class App extends Component{
     })
   }
 
-  handler = (price, addCart) =>{
-    if(addCart){
+  handleItem = (price, addItem) =>{
+    if(addItem){
       this.setState(prevState => ({totalCost: prevState.totalCost+price}))
     }else{
       this.setState(prevState => ({totalCost: prevState.totalCost-price}))
@@ -39,8 +39,8 @@ class App extends Component{
       <header className="App-header">
         <Container>
           {this.state.products.map(p => (
-            <div key={p.id}>
-              <Product product = {p} handler = {this.handler}/>
+            <div key={`${p.id}`}>
+              <Product product = {p} handleItem = {this.handleItem}/>
             </div>
           ))}
           

@@ -19,20 +19,30 @@ export class Product extends Component{
         }
     }
 
-    openDetailModal = () => {
-        this.setState({showDetail:true});
+    openModal = (contentType) =>{
+        switch(contentType){
+            case "DESCR":
+                this.setState({showDetail: true});
+                break;
+            case "IMG":
+                this.setState({showImg: true});
+                break;
+            default:
+                console.log("content type does not exist");
+        }
     }
 
-    closeDetailModal = () => {
-        this.setState({showDetail:false});
-    }
-
-    openImgModal = () => {
-        this.setState({showImg:true});
-    }
-
-    closeImgModal = () => {
-        this.setState({showImg:false});
+    closeModal = (contentType) =>{
+        switch(contentType){
+            case "DESCR":
+                this.setState({showDetail: false});
+                break;
+            case "IMG":
+                this.setState({showImg: false});
+                break;
+            default:
+                console.log("content type does not exist");
+        }
     }
 
     toggleItem = (inCart) => {
@@ -44,7 +54,7 @@ export class Product extends Component{
         event.preventDefault();
 
         const form = event.target;
-        let inCart = this.state.inCart;
+        const { inCart } = this.state;
 
         if (inCart || form.checkValidity()) {
             this.toggleItem(inCart);
@@ -63,10 +73,13 @@ export class Product extends Component{
         const detailContent = <div dangerouslySetInnerHTML={{__html: this.props.product.description}} />;
         const imgContent = <img src={url_standard} alt={description}/>;
 
+        const DESCR = "DESCR";
+        const IMG = "IMG";
+
         return(
             <Card className="text-center shadow">
                 <div className="overflow">
-                    <a href = "#" onClick={this.openImgModal.bind(this)}>
+                    <a href = "#" onClick={this.openModal.bind(this, IMG)}>
                         <Card.Img src={url_standard} alt={description} className="card-img-top"/>
                     </a>
                     <Card.Body className="text-dark">
@@ -78,7 +91,9 @@ export class Product extends Component{
                             {meta_description}
                         </p>
                 
-                        <a href = "#" className="link-primary" onClick={this.openDetailModal.bind(this)}>more details</a>
+                        <a href = "#" className="link-primary" onClick={this.openModal.bind(this, DESCR)}>
+                            more details
+                        </a>
                         <hr/>
 
                         <Form noValidate validated={validated} onSubmit={this.handleSubmit.bind(this)}>
@@ -101,7 +116,7 @@ export class Product extends Component{
                                 </Row>
 
                                 <Button variant={!inCart ? "primary" : "outline-primary"} type="submit">
-                                    <i class="fa fa-shopping-cart"></i> {!inCart ? 'Add to cart' : 'Remove from Cart'} - ${price}
+                                    <i className="fa fa-shopping-cart"></i> {!inCart ? 'Add to cart' : 'Remove from Cart'} - ${price}
                                 </Button>    
                             </Form>
 
@@ -109,14 +124,16 @@ export class Product extends Component{
                                 title={name} 
                                 content={detailContent} 
                                 show={showDetail} 
-                                closeCallback = {this.closeDetailModal}
+                                closeCallBack = {this.closeModal}
+                                type = {DESCR}
                             />
                             
                             <CustomModal 
                                 title={name} 
                                 content={imgContent} 
                                 show={showImg} 
-                                closeCallback = {this.closeImgModal}
+                                closeCallBack = {this.closeModal}
+                                type = {IMG}
                             />
                     </Card.Body>
                 </div>

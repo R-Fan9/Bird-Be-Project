@@ -36,21 +36,23 @@ class App extends Component{
 
     return(
       <div className="App">
-      <header className="App-header">
-        <Container>
-          {this.state.products.map(p => (
-            <div key={`${p.id}`}>
-              <Product product = {p} handleItem = {this.handleItem}/>
+            <h3>
+              <strong>Hooray! We have your supplements ready.</strong>
+            </h3>
+            
+          <div className = "d-flex justify-content-center">
+            <div className = "row ">
+              {this.state.products.map(p => (
+                <div className="col-md-6 d-flex justify-content-center" key={p.id}>
+                  <Product product = {p} handleItem = {this.handleItem}/>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
           
           <h4>
             <strong>Total: {totalCost} USD</strong>
           </h4>
-           
-        </Container>
-  
-      </header>
     </div>
     )
   }

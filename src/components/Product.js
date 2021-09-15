@@ -1,5 +1,6 @@
 import { Component } from "react";
 import { Card, Button, Form, Col, Row } from 'react-bootstrap';
+import "../css/product.css"
 
 class TextForm extends Component{
     render(){
@@ -86,43 +87,83 @@ export class Product extends Component{
 
     render(){
         const { inCart, validated } = this.state;
-        const {id, name, price, description, meta_description, modifiers} = this.props.product;
-        const {url_standard} = this.props.product.primary_image;
+        const {id, name, price, meta_description, modifiers} = this.props.product;
+        const {url_standard, description} = this.props.product.primary_image;
 
         return(
-        <Card className = "mb-3" style={{ color : "#000"}}>
-            <Card.Img src = {url_standard}/>
-            <Card.Body>
-              <Card.Title>{name}</Card.Title>
-              <Card.Text>${price}</Card.Text>
 
-              <Form noValidate validated={validated} onSubmit={this.handleSubmit.bind(this)}>
-                  <Col className="mb-3">
-                    {modifiers.filter(m => m.type === 'text').map(m => (
-                        <div key = {`${m.id}_${id}`}>
-                            <TextForm pid = {id} modifier = {m}/>
-                        </div>
-                    ))}
-                  </Col>
-                  
-                  <Row className="mb-3">
-                    {modifiers.filter(m => m.type === 'radio_buttons').map(m => (
-                        <div key = {`${m.id}_${id}`}>
-                            <RadioForm pid = {id} modifier = {m}/>
-                        </div>
-                    ))}
-                  </Row>
+            <div className="card text-center shadow">
+                <div className="overflow">
+                    <img src={url_standard} alt={description} className="card-img-top"/>
+                    <div className="card-body text-dark">
+                        <h4 className="card-title">{name}</h4>
+                        <p className="card-text text-secondary">
+                            {meta_description}
+                        </p>
 
-                <Button variant={!inCart ? "primary" : "outline-primary"} type="submit">
-                    {!inCart ? 'Add to cart' : 'Remove from Cart'}
-                </Button>    
-              </Form>
+                        <a href="#" className="link-primary">more details</a>
+                    </div>
+                </div>
+            </div>
 
-              {/* <div dangerouslySetInnerHTML={{__html: this.props.product.description}} /> */}
+
+        // <Card className = "mt-4" style={{ color : "#000" }}>
+        //     <Card.Body>
+        //         <Row>
+        //             <Col sm={8}>
+        //                 <div className="d-flex justify-content-start">
+        //                     <Card.Title>{name}</Card.Title>                        
+        //                 </div>
+        //             </Col>
+        //             <Col sm={2}>
+        //                 <div className="d-flex justify-content-end">
+        //                     <h5><bold>${price}</bold></h5>
+        //                 </div>
+        //             </Col>
+        //         </Row>
+
+        //         <Row>
+        //             <Col sm={8}>
+        //                 <div className="d-flex align-items-start flex-column" style={{ height:"27rem" }}>
+        //                     <div class="mb-auto">
+        //                         <p className="lead" style = {{ textAlign:"Left"}}><small>{meta_description}</small></p>
+        //                     </div>
+        //                     <div>
+        //                     <Form noValidate validated={validated} onSubmit={this.handleSubmit.bind(this)}>
+        //                         <Col className="mb-3">
+        //                             {modifiers.filter(m => m.type === 'text').map(m => (
+        //                                 <div key = {`${m.id}_${id}`}>
+        //                                     <TextForm pid = {id} modifier = {m}/>
+        //                                 </div>
+        //                             ))}
+        //                         </Col>
+                                
+        //                         <Row className="mb-3">
+        //                             {modifiers.filter(m => m.type === 'radio_buttons').map(m => (
+        //                                 <div key = {`${m.id}_${id}`}>
+        //                                     <RadioForm pid = {id} modifier = {m}/>
+        //                                 </div>
+        //                             ))}
+        //                         </Row>
+
+        //                         <Button variant={!inCart ? "primary" : "outline-primary"} type="submit">
+        //                             {!inCart ? 'Add to cart' : 'Remove from Cart'}
+        //                         </Button>    
+        //                     </Form>
+        //                     </div>
+        //                 </div>
+        //             </Col>
+
+        //             <Col sm={4}>
+        //                 <Card.Img src={`${url_standard}`} />
+        //             </Col>
+        //         </Row>
+
+        //       {/* <div dangerouslySetInnerHTML={{__html: this.props.product.description}} /> */}
               
-            </Card.Body>  
+        //     </Card.Body>  
 
-          </Card>
+        //   </Card>
 
         )
     }

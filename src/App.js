@@ -52,7 +52,7 @@ class App extends Component{
               ))}
             </Row>
           </Container> : 
-          <span className="visually-hidden m-5">Loading...</span>
+          <span className="m-5">Loading...</span>
         }
         <h4>
           <strong>Total: {totalCost} USD</strong>

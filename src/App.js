@@ -1,6 +1,6 @@
 import './App.css';
-import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Container, Row, Col } from 'react-bootstrap';
 import { Component } from 'react';
 import { Product } from './components/Product';
 import { getAllProducts } from './actions/getProducts';
@@ -12,14 +12,17 @@ class App extends Component{
 
     this.state = {
       products: [],
-      totalCost: 0
+      totalCost: 0,
+      loading:true,
     }
-
   }
 
-  componentWillMount(){
+  componentDidMount(){
     getAllProducts().then(res => {
-      this.setState({products: res.products})
+      this.setState({products: res.products, loading: false})
+    }).catch(err => {
+      console.log(err.response.data);
+      console.log(err.response.status);
     })
   }
 
@@ -32,27 +35,29 @@ class App extends Component{
   }
 
   render(){
-    const { totalCost } = this.state;
+    const { totalCost, loading } = this.state;
 
     return(
       <div className="App">
-            <h3>
-              <strong>Hooray! We have your supplements ready.</strong>
-            </h3>
-            
-          <div className = "d-flex justify-content-center">
-            <div className = "row ">
+        <h3>
+          <strong>Hooray! We have your supplements ready.</strong>
+        </h3>
+        {
+          !loading ?     
+          <Container className = "d-flex justify-content-center">
+            <Row>
               {this.state.products.map(p => (
-                <div className="col-md-6 d-flex justify-content-center" key={p.id}>
+                <Col className="col-md-6 d-flex justify-content-center" key={p.id}>
                   <Product product = {p} handleItem = {this.handleItem}/>
-                </div>
+                </Col>
               ))}
-            </div>
-          </div>
-          
-          <h4>
-            <strong>Total: {totalCost} USD</strong>
-          </h4>
+            </Row>
+          </Container> : 
+          <span className="visually-hidden m-5">Loading...</span>
+        }
+        <h4>
+          <strong>Total: {totalCost} USD</strong>
+        </h4>
     </div>
     )
   }

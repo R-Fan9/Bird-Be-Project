@@ -2,14 +2,12 @@
     width:30rem;
     margin-bottom: 3rem;
     margin-top: 3rem;
+    margin-right: 0.5rem;
+    margin-left: 0.5rem;
 }
 
 .card:hover{
     box-shadow: 5px 10px 20px 1px rgba(0,0,0,0.253) !important;
-}
-
-.card-body{
-    padding: 3rem 0 !important
 }
 
 .card-text{
@@ -17,21 +15,18 @@
     padding: 0.4rem 2.0rem;
 }
 
-.container-fluid .row{
-    padding-top: 1rem;
-}
-
 .overflow{
     overflow: hidden;
 }
 
 .card-img-top{
-    transform: scale(0.7);
+    transform: scale(0.81);
     transition: transform 0.5s ease;
 }
 
 .card-img-top:hover{
     transform: scale(1);
+    cursor: pointer;
 }
 
 hr {

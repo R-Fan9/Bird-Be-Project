@@ -1,59 +1,11 @@
+import "../utils/constants.js";
+import '../css/components/product.css';
+import { recipent_modifier, allergy_modifier } from "../utils/constants.js";
 import { Component } from "react";
 import { Card, Button, Form, Col, Row, Modal } from 'react-bootstrap';
-import "../css/product.css"
-
-class TextForm extends Component{
-    render(){
-
-        const { pid, modifier } = this.props
-        const { id, name, display_name, required, config } = modifier
-        const { text_characters_limited, text_min_length, text_max_length } = config
-    
-        return(
-            <Form.Group className="mb-3" controlId={`form-${pid}_${id}`}>
-                <Form.Label><strong>{name}<span>{required ? "*" : ""}</span></strong></Form.Label>
-                <Form.Control 
-                        type="text" 
-                        name="input"
-                        placeholder={`${display_name} ${!required ? "(Optional)" : ""}`}
-                        defaultValue={config.default_value}
-                        required={required}
-                        maxLength={text_characters_limited ? text_max_length : ''}
-                        minLength={text_characters_limited ? text_min_length : ''}
-                />
-                <Form.Control.Feedback type="invalid">{`Please provide a valid ${name}`}</Form.Control.Feedback>
-            </Form.Group>
-        )
-    }
-}
-
-class RadioForm extends Component{
-
-    render(){
-        const { pid, modifier } = this.props
-        const { name, required, display_name, option_values } = modifier
-        return(
-            <Form.Group>
-                <Form.Label><strong>{name}</strong></Form.Label>
-                <div key={`inline-radio-${pid}`} className="mb-3">
-                    {option_values.map((op_val) => (
-                        <Form.Check
-                            inline
-                            defaultChecked={op_val.is_default}
-                            label={op_val.label}
-                            type="radio"
-                            id={`inline-radio-${op_val.id}_${pid}`}
-                            key={`${op_val.id}_${pid}`}
-                            name="radio-form"
-                            required={required}
-                        />
-                    ))}
-                </div>
-            </Form.Group>
-        )
-    }
-}
-
+import { TextForm } from "../widgets/forms/TextForm";
+import { RadioForm } from "../widgets/forms/RadioForm";
+import { CustomModal } from "../widgets/Modal.js";
 
 export class Product extends Component{
 
@@ -62,16 +14,25 @@ export class Product extends Component{
         this.state = {
           inCart:false,
           validated:false,
-          showModal:false
+          showDetail:false,
+          showImg:false,
         }
     }
 
-    openModal = () => {
-        this.setState({showModal:true});
+    openDetailModal = () => {
+        this.setState({showDetail:true});
     }
 
-    closeModal = () => {
-        this.setState({showModal:false});
+    closeDetailModal = () => {
+        this.setState({showDetail:false});
+    }
+
+    openImgModal = () => {
+        this.setState({showImg:true});
+    }
+
+    closeImgModal = () => {
+        this.setState({showImg:false});
     }
 
     toggleItem = (inCart) => {
@@ -95,15 +56,19 @@ export class Product extends Component{
     }
 
     render(){
-        const { inCart, validated, showModal } = this.state;
+        const { inCart, validated, showDetail, showImg } = this.state;
         const {id, name, price, type, sku, meta_description, modifiers} = this.props.product;
         const {url_standard, description} = this.props.product.primary_image;
 
-        return(
+        const detailContent = <div dangerouslySetInnerHTML={{__html: this.props.product.description}} />;
+        const imgContent = <img src={url_standard} alt={description}/>;
 
+        return(
             <Card className="text-center shadow">
                 <div className="overflow">
-                    <Card.Img src={url_standard} alt={description} className="card-img-top"/>
+                    <a href = "#" onClick={this.openImgModal.bind(this)}>
+                        <Card.Img src={url_standard} alt={description} className="card-img-top"/>
+                    </a>
                     <Card.Body className="text-dark">
                         <h4 className="card-title">{name} - ${price}</h4>
                         <p className="card-text text-muted">
@@ -113,7 +78,7 @@ export class Product extends Component{
                             {meta_description}
                         </p>
                 
-                        <a href = "#" className="link-primary" onClick={this.openModal.bind(this)}>more details</a>
+                        <a href = "#" className="link-primary" onClick={this.openDetailModal.bind(this)}>more details</a>
                         <hr/>
 
                         <Form noValidate validated={validated} onSubmit={this.handleSubmit.bind(this)}>
@@ -123,6 +88,8 @@ export class Product extends Component{
                                             <TextForm pid = {id} modifier = {m}/>
                                         </div>
                                     ))}
+                                    <TextForm pid = {id} modifier = {JSON.parse(recipent_modifier)}/>
+                                    <TextForm pid = {id} modifier = {JSON.parse(allergy_modifier)}/>
                                 </Col>
                                 
                                 <Row className="mb-3 d-flex justify-content-center">
@@ -137,22 +104,22 @@ export class Product extends Component{
                                     {!inCart ? 'Add to cart' : 'Remove from Cart'}
                                 </Button>    
                             </Form>
+
+                            <CustomModal 
+                                title={name} 
+                                content={detailContent} 
+                                show={showDetail} 
+                                closeCallback = {this.closeDetailModal}
+                            />
+                            
+                            <CustomModal 
+                                title={name} 
+                                content={imgContent} 
+                                show={showImg} 
+                                closeCallback = {this.closeImgModal}
+                            />
                     </Card.Body>
                 </div>
-
-                <Modal show={showModal} onHide={this.closeModal.bind(this)}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>{name}</Modal.Title>
-                    </Modal.Header>
-                        <Modal.Body>
-                            <div dangerouslySetInnerHTML={{__html: this.props.product.description}} />
-                        </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={this.closeModal.bind(this)}>
-                            Close
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
             </Card>
 
         )

@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { Card, Button, Form, Col, Row } from 'react-bootstrap';
+import { Card, Button, Form, Col, Row, Modal } from 'react-bootstrap';
 import "../css/product.css"
 
 class TextForm extends Component{
@@ -11,11 +11,11 @@ class TextForm extends Component{
     
         return(
             <Form.Group className="mb-3" controlId={`form-${pid}_${id}`}>
-                <Form.Label>{name}<span>{required ? "*" : ""}</span></Form.Label>
+                <Form.Label><strong>{name}<span>{required ? "*" : ""}</span></strong></Form.Label>
                 <Form.Control 
                         type="text" 
                         name="input"
-                        placeholder={display_name}
+                        placeholder={`${display_name} ${!required ? "(Optional)" : ""}`}
                         defaultValue={config.default_value}
                         required={required}
                         maxLength={text_characters_limited ? text_max_length : ''}
@@ -34,7 +34,7 @@ class RadioForm extends Component{
         const { name, required, display_name, option_values } = modifier
         return(
             <Form.Group>
-                <Form.Label>{name}</Form.Label>
+                <Form.Label><strong>{name}</strong></Form.Label>
                 <div key={`inline-radio-${pid}`} className="mb-3">
                     {option_values.map((op_val) => (
                         <Form.Check
@@ -62,7 +62,16 @@ export class Product extends Component{
         this.state = {
           inCart:false,
           validated:false,
+          showModal:false
         }
+    }
+
+    openModal = () => {
+        this.setState({showModal:true});
+    }
+
+    closeModal = () => {
+        this.setState({showModal:false});
     }
 
     toggleItem = (inCart) => {
@@ -86,84 +95,65 @@ export class Product extends Component{
     }
 
     render(){
-        const { inCart, validated } = this.state;
-        const {id, name, price, meta_description, modifiers} = this.props.product;
+        const { inCart, validated, showModal } = this.state;
+        const {id, name, price, type, sku, meta_description, modifiers} = this.props.product;
         const {url_standard, description} = this.props.product.primary_image;
 
         return(
 
-            <div className="card text-center shadow">
+            <Card className="text-center shadow">
                 <div className="overflow">
-                    <img src={url_standard} alt={description} className="card-img-top"/>
-                    <div className="card-body text-dark">
-                        <h4 className="card-title">{name}</h4>
+                    <Card.Img src={url_standard} alt={description} className="card-img-top"/>
+                    <Card.Body className="text-dark">
+                        <h4 className="card-title">{name} - ${price}</h4>
+                        <p className="card-text text-muted">
+                            {type} | {sku}
+                        </p>
                         <p className="card-text text-secondary">
                             {meta_description}
                         </p>
+                
+                        <a href = "#" className="link-primary" onClick={this.openModal.bind(this)}>more details</a>
+                        <hr/>
 
-                        <a href="#" className="link-primary">more details</a>
-                    </div>
-                </div>
-            </div>
-
-
-        // <Card className = "mt-4" style={{ color : "#000" }}>
-        //     <Card.Body>
-        //         <Row>
-        //             <Col sm={8}>
-        //                 <div className="d-flex justify-content-start">
-        //                     <Card.Title>{name}</Card.Title>                        
-        //                 </div>
-        //             </Col>
-        //             <Col sm={2}>
-        //                 <div className="d-flex justify-content-end">
-        //                     <h5><bold>${price}</bold></h5>
-        //                 </div>
-        //             </Col>
-        //         </Row>
-
-        //         <Row>
-        //             <Col sm={8}>
-        //                 <div className="d-flex align-items-start flex-column" style={{ height:"27rem" }}>
-        //                     <div class="mb-auto">
-        //                         <p className="lead" style = {{ textAlign:"Left"}}><small>{meta_description}</small></p>
-        //                     </div>
-        //                     <div>
-        //                     <Form noValidate validated={validated} onSubmit={this.handleSubmit.bind(this)}>
-        //                         <Col className="mb-3">
-        //                             {modifiers.filter(m => m.type === 'text').map(m => (
-        //                                 <div key = {`${m.id}_${id}`}>
-        //                                     <TextForm pid = {id} modifier = {m}/>
-        //                                 </div>
-        //                             ))}
-        //                         </Col>
+                        <Form noValidate validated={validated} onSubmit={this.handleSubmit.bind(this)}>
+                                <Col className="mb-3">
+                                    {modifiers.filter(m => m.type === 'text').map(m => (
+                                        <div key = {`${m.id}_${id}`}>
+                                            <TextForm pid = {id} modifier = {m}/>
+                                        </div>
+                                    ))}
+                                </Col>
                                 
-        //                         <Row className="mb-3">
-        //                             {modifiers.filter(m => m.type === 'radio_buttons').map(m => (
-        //                                 <div key = {`${m.id}_${id}`}>
-        //                                     <RadioForm pid = {id} modifier = {m}/>
-        //                                 </div>
-        //                             ))}
-        //                         </Row>
+                                <Row className="mb-3 d-flex justify-content-center">
+                                    {modifiers.filter(m => m.type === 'radio_buttons').map(m => (
+                                        <div key = {`${m.id}_${id}`}>
+                                            <RadioForm pid = {id} modifier = {m}/>
+                                        </div>
+                                    ))}
+                                </Row>
 
-        //                         <Button variant={!inCart ? "primary" : "outline-primary"} type="submit">
-        //                             {!inCart ? 'Add to cart' : 'Remove from Cart'}
-        //                         </Button>    
-        //                     </Form>
-        //                     </div>
-        //                 </div>
-        //             </Col>
+                                <Button variant={!inCart ? "primary" : "outline-primary"} type="submit">
+                                    {!inCart ? 'Add to cart' : 'Remove from Cart'}
+                                </Button>    
+                            </Form>
+                    </Card.Body>
+                </div>
 
-        //             <Col sm={4}>
-        //                 <Card.Img src={`${url_standard}`} />
-        //             </Col>
-        //         </Row>
-
-        //       {/* <div dangerouslySetInnerHTML={{__html: this.props.product.description}} /> */}
-              
-        //     </Card.Body>  
-
-        //   </Card>
+                <Modal show={showModal} onHide={this.closeModal.bind(this)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>{name}</Modal.Title>
+                    </Modal.Header>
+                        <Modal.Body>
+                            <div dangerouslySetInnerHTML={{__html: this.props.product.description}} />
+                        </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.closeModal.bind(this)}>
+                            Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </Card>
 
         )
     }

@@ -101,7 +101,7 @@ export class Product extends Component{
                                 </Row>
 
                                 <Button variant={!inCart ? "primary" : "outline-primary"} type="submit">
-                                    {!inCart ? 'Add to cart' : 'Remove from Cart'}
+                                    <i class="fa fa-shopping-cart"></i> {!inCart ? 'Add to cart' : 'Remove from Cart'} - ${price}
                                 </Button>    
                             </Form>
 

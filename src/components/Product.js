@@ -1,11 +1,11 @@
 import "../utils/constants.js";
 import '../css/components/product.css';
-import { recipent_modifier, allergy_modifier } from "../utils/constants.js";
+import { DESCR, IMG, recipent_modifier, allergy_modifier } from "../utils/constants.js";
 import { Component } from "react";
-import { Card, Button, Form, Col, Row, Modal } from 'react-bootstrap';
+import { Card, Button, Form, Col, Row } from 'react-bootstrap';
 import { TextForm } from "../widgets/forms/TextForm";
 import { RadioForm } from "../widgets/forms/RadioForm";
-import { CustomModal } from "../widgets/Modal.js";
+import { CustomModal } from "../widgets/CustomModal.js";
 
 export class Product extends Component{
 
@@ -19,12 +19,13 @@ export class Product extends Component{
         }
     }
 
+    //opens modal to display content
     openModal = (contentType) =>{
         switch(contentType){
-            case "DESCR":
+            case "DESCR": //description content
                 this.setState({showDetail: true});
                 break;
-            case "IMG":
+            case "IMG": //image content
                 this.setState({showImg: true});
                 break;
             default:
@@ -32,6 +33,7 @@ export class Product extends Component{
         }
     }
 
+    //closes modal
     closeModal = (contentType) =>{
         switch(contentType){
             case "DESCR":
@@ -45,23 +47,30 @@ export class Product extends Component{
         }
     }
 
+    //toggles the inCart state and updates total price based on the user action
     toggleItem = (inCart) => {
-        this.props.handleItem(this.props.product.price, !inCart);
         this.setState({inCart:!inCart});
+
+        //fires the parent callback to update total price
+        this.props.handleItem(this.props.product.price, !inCart); 
     }
 
+    //handles form submission
     handleSubmit = (event) =>{
         event.preventDefault();
 
         const form = event.target;
         const { inCart } = this.state;
 
+        //if the user removed a product or add or product with a valid form
         if (inCart || form.checkValidity()) {
             this.toggleItem(inCart);
-            form.reset();
-            this.setState({validated:false});
+            form.reset(); //rest form
+            this.setState({validated:false}); //disable validation on form
+
+        //if the user add product with invalid form 
         }else{
-            this.setState({validated:true});
+            this.setState({validated:true}); //enable form validate
         }
     }
 
@@ -72,9 +81,6 @@ export class Product extends Component{
 
         const detailContent = <div dangerouslySetInnerHTML={{__html: this.props.product.description}} />;
         const imgContent = <img src={url_standard} alt={description}/>;
-
-        const DESCR = "DESCR";
-        const IMG = "IMG";
 
         return(
             <Card className="text-center shadow">
@@ -138,7 +144,6 @@ export class Product extends Component{
                     </Card.Body>
                 </div>
             </Card>
-
         )
     }
 }

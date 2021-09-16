@@ -2,7 +2,7 @@ import './App.css';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Component } from 'react';
 import { Product } from './components/Product';
-import { getAllProducts } from './actions/getProducts';
+import { getProducts } from './actions/getProducts';
 
 class App extends Component{
 
@@ -16,8 +16,9 @@ class App extends Component{
     }
   }
 
+  //fetches the JSON object (product details) after the component is mounted
   componentDidMount(){
-    getAllProducts().then(res => {
+    getProducts().then(res => {
       this.setState({products: res.products, loading: false})
     }).catch(err => {
       console.log(err.response.data);
@@ -25,6 +26,7 @@ class App extends Component{
     })
   }
 
+  //a callback that updates the total price based on the user decision
   handleItem = (price, addItem) =>{
     if(addItem){
       this.setState(prevState => ({totalCost: prevState.totalCost+price}))

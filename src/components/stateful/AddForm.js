@@ -1,9 +1,9 @@
 import { Component } from "react";
 import { Button, Form, Col, Row } from 'react-bootstrap';
-import { TextForm } from "../widgets/forms/TextForm";
-import { RadioForm } from "../widgets/forms/RadioForm";
+import { TextForm } from "../stateless/TextForm";
+import { RadioForm } from "../stateless/RadioForm";
 
-export class ProductForm extends Component{
+export class AddForm extends Component{
 
     constructor(){
         super();
@@ -63,12 +63,12 @@ export class ProductForm extends Component{
                     ))}
                 </Row>
 
-                <Row className="d-flex justify-content-center">
+                <div className="d-flex justify-content-center">
                     <Button variant={!inCart ? "primary" : "outline-primary"} type="submit">
                         <i className="fa fa-shopping-cart"></i> 
                         {!inCart ? ' Add to cart' : ' Remove from Cart'} - ${price}
                     </Button>   
-                </Row>
+                </div>
  
             </Form>
         )

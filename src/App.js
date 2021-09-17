@@ -1,7 +1,7 @@
 import './App.css';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Component } from 'react';
-import { Product } from './components/Product';
+import { Product } from './components/stateful/Product';
 import { getProducts } from './actions/getProducts';
 
 class App extends Component{

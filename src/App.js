@@ -45,7 +45,7 @@ class App extends Component{
         </h3>
         {
           !loading ?     
-          <Container className = "d-flex justify-content-center">
+          <Container>
             <Row>
               {this.state.products.map(p => (
                 <Col className="col-md-6 d-flex justify-content-center" key={p.id}>

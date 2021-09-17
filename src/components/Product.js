@@ -1,6 +1,6 @@
 import "../utils/constants.js";
 import '../css/components/product.css';
-import { DESCR, IMG, recipent_modifier, allergy_modifier } from "../utils/constants.js";
+import { DESCR, IMG } from "../utils/constants.js";
 import { Component } from "react";
 import { Card, Button, Form, Col, Row } from 'react-bootstrap';
 import { TextForm } from "../widgets/forms/TextForm";
@@ -82,6 +82,14 @@ export class Product extends Component{
         const detailContent = <div dangerouslySetInnerHTML={{__html: this.props.product.description}} />;
         const imgContent = <img src={url_standard} alt={description}/>;
 
+        const recipent_modifier = `{"id":157,"name":"Recipent's name","display_name":"Who it's for","type":"text","required":true,` + 
+        `"config":{"default_value":"","text_characters_limited":"true","text_min_length":"1","text_max_length":"18"},` + 
+        `"option_values":[]}`;
+        
+        const allergy_modifier = `{"id":158,"name":"Allergies","display_name":"List any allergies","type":"text","required":false,` + 
+        `"config":{"default_value":"","text_characters_limited":"false","text_min_length":"","text_max_length":""},` + 
+        `"option_values":[]}`;
+
         return(
             <Card className="text-center shadow">
                 <div className="overflow">
@@ -90,12 +98,8 @@ export class Product extends Component{
                     </a>
                     <Card.Body className="text-dark">
                         <h4 className="card-title">{name} - ${price}</h4>
-                        <p className="card-text text-muted">
-                            {type} | {sku}
-                        </p>
-                        <p className="card-text text-secondary">
-                            {meta_description}
-                        </p>
+                        <p className="card-text text-muted">{type} | {sku}</p>
+                        <p className="card-text text-secondary">{meta_description}</p>
                 
                         <a href = "#" className="link-primary" onClick={this.openModal.bind(this, DESCR)}>
                             more details

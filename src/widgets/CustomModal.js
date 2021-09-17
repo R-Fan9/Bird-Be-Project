@@ -4,13 +4,13 @@ import { Modal, Button } from 'react-bootstrap';
 export class CustomModal extends Component{
 
     render(){
-        const { title, content, show, type } = this.props
+        const { title, content, show, type, align } = this.props
         return(
-            <Modal show={show} onHide={() => this.props.closeCallBack(type)}>
+            <Modal centered show={show} onHide={() => this.props.closeCallBack(type)}>
                     <Modal.Header closeButton>
                         <Modal.Title>{title}</Modal.Title>
                     </Modal.Header>
-                        <Modal.Body className="d-flex justify-content-center">
+                        <Modal.Body className={align}>
                             {content}
                         </Modal.Body>
                     <Modal.Footer>

@@ -9,7 +9,7 @@ export class RadioForm extends Component{
         const { name, required, option_values } = modifier
         return(
             <Form.Group>
-                <Form.Label><strong>{name}</strong></Form.Label>
+                <Form.Label className="d-flex justify-content-center"><strong>{name}</strong></Form.Label>
                 <div key={`inline-radio-${pid}`} className="mb-3">
                     {option_values.map((op_val) => (
                         <Form.Check

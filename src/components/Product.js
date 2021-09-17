@@ -1,11 +1,10 @@
 import "../utils/constants.js";
 import '../css/components/product.css';
-import { DESCR, IMG } from "../utils/constants.js";
+import { FORM, DESCR, IMG } from "../utils/constants.js";
 import { Component } from "react";
-import { Card, Button, Form, Col, Row } from 'react-bootstrap';
-import { TextForm } from "../widgets/forms/TextForm";
-import { RadioForm } from "../widgets/forms/RadioForm";
+import { Card, Button } from 'react-bootstrap';
 import { CustomModal } from "../widgets/CustomModal.js";
+import { ProductForm } from "./ProductForm.js";
 
 export class Product extends Component{
 
@@ -13,7 +12,7 @@ export class Product extends Component{
         super();
         this.state = {
           inCart:false,
-          validated:false,
+          showForm:false,
           showDetail:false,
           showImg:false,
         }
@@ -22,6 +21,9 @@ export class Product extends Component{
     //opens modal to display content
     openModal = (contentType) =>{
         switch(contentType){
+            case "FORM": //form content
+                this.setState({showForm:true});
+                break;
             case "DESCR": //description content
                 this.setState({showDetail: true});
                 break;
@@ -36,6 +38,9 @@ export class Product extends Component{
     //closes modal
     closeModal = (contentType) =>{
         switch(contentType){
+            case "FORM":
+                this.setState({showForm:false});
+                break;
             case "DESCR":
                 this.setState({showDetail: false});
                 break;
@@ -55,80 +60,45 @@ export class Product extends Component{
         this.props.handleItem(this.props.product.price, !inCart); 
     }
 
-    //handles form submission
-    handleSubmit = (event) =>{
-        event.preventDefault();
-
-        const form = event.target;
-        const { inCart } = this.state;
-
-        //if the user removed a product or add or product with a valid form
-        if (inCart || form.checkValidity()) {
-            this.toggleItem(inCart);
-            form.reset(); //rest form
-            this.setState({validated:false}); //disable validation on form
-
-        //if the user add product with invalid form 
-        }else{
-            this.setState({validated:true}); //enable form validate
-        }
-    }
-
     render(){
-        const { inCart, validated, showDetail, showImg } = this.state;
+        const { inCart, showForm, showDetail, showImg } = this.state;
         const {id, name, price, type, sku, meta_description, modifiers} = this.props.product;
         const {url_standard, description} = this.props.product.primary_image;
 
         const detailContent = <div dangerouslySetInnerHTML={{__html: this.props.product.description}} />;
         const imgContent = <img src={url_standard} alt={description}/>;
 
-        const recipent_modifier = `{"id":157,"name":"Recipent's name","display_name":"Who it's for","type":"text","required":true,` + 
-        `"config":{"default_value":"","text_characters_limited":"true","text_min_length":"1","text_max_length":"18"},` + 
-        `"option_values":[]}`;
-        
-        const allergy_modifier = `{"id":158,"name":"Allergies","display_name":"List any allergies","type":"text","required":false,` + 
-        `"config":{"default_value":"","text_characters_limited":"false","text_min_length":"","text_max_length":""},` + 
-        `"option_values":[]}`;
-
         return(
             <Card className="text-center shadow">
                 <div className="overflow">
-                    <a href = "#" onClick={this.openModal.bind(this, IMG)}>
-                        <Card.Img src={url_standard} alt={description} className="card-img-top"/>
-                    </a>
+                    <Card.Img src={url_standard} alt={description} className="card-img-top" onClick={this.openModal.bind(this, IMG)}/>
                     <Card.Body className="text-dark">
                         <h4 className="card-title">{name} - ${price}</h4>
                         <p className="card-text text-muted">{type} | {sku}</p>
                         <p className="card-text text-secondary">{meta_description}</p>
                 
-                        <a href = "#" className="link-primary" onClick={this.openModal.bind(this, DESCR)}>
-                            more details
-                        </a>
+                        <a href = "#!" className="link-primary" onClick={this.openModal.bind(this, DESCR)}>more details</a>
                         <hr/>
 
-                        <Form noValidate validated={validated} onSubmit={this.handleSubmit.bind(this)}>
-                                <Col className="mb-3">
-                                    {modifiers.filter(m => m.type === 'text').map(m => (
-                                        <div key = {`${m.id}_${id}`}>
-                                            <TextForm pid = {id} modifier = {m}/>
-                                        </div>
-                                    ))}
-                                    <TextForm pid = {id} modifier = {JSON.parse(recipent_modifier)}/>
-                                    <TextForm pid = {id} modifier = {JSON.parse(allergy_modifier)}/>
-                                </Col>
-                                
-                                <Row className="mb-3 d-flex justify-content-center">
-                                    {modifiers.filter(m => m.type === 'radio_buttons').map(m => (
-                                        <div key = {`${m.id}_${id}`}>
-                                            <RadioForm pid = {id} modifier = {m}/>
-                                        </div>
-                                    ))}
-                                </Row>
+                        <Button variant="outline-light" onClick={
+                            !inCart ? this.openModal.bind(this, FORM) : this.toggleItem.bind(this, inCart)}>
+                               {!inCart ? <i className="fa text-dark">&#xf067;</i> : <i className="fa text-dark">&#xf068;</i>} 
+                        </Button>
 
-                                <Button variant={!inCart ? "primary" : "outline-primary"} type="submit">
-                                    <i className="fa fa-shopping-cart"></i> {!inCart ? 'Add to cart' : 'Remove from Cart'} - ${price}
-                                </Button>    
-                            </Form>
+                        <CustomModal 
+                                title={name} 
+                                content={
+                                <ProductForm 
+                                    pid = {id} 
+                                    price = {price} 
+                                    modifiers = {modifiers} 
+                                    inCart = {inCart}
+                                    toggleItem={this.toggleItem}/>
+                                } 
+                                show={showForm} 
+                                closeCallBack = {this.closeModal}
+                                type = {FORM}
+                            />
 
                             <CustomModal 
                                 title={name} 
@@ -144,6 +114,7 @@ export class Product extends Component{
                                 show={showImg} 
                                 closeCallBack = {this.closeModal}
                                 type = {IMG}
+                                align = {"d-flex justify-content-center"}
                             />
                     </Card.Body>
                 </div>
